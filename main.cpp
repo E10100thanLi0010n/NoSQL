@@ -4,8 +4,22 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<stdint.h> //uint32_t
 
 const int listMapCap = 20;
+
+#define COLUMN_USER_SIZE 32
+#define COLUMN_EMAIL_SIZE 127
+
+typedef struct {
+
+    uint32_t id;
+    char username[COLUMN_USER_SIZE + 1];
+    char email[COLUMN_EMAIL_SIZE + 1];
+
+}Row;
+
+
 
 struct key_value
 {
