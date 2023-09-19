@@ -6,11 +6,16 @@
 #include<string.h>
 #include<stdint.h> //uint32_t
 
-const int listMapCap = 20;
+//const int listMapCap = 20;
+//#define COLUMN_USER_SIZE 32
+//#define COLUMN_EMAIL_SIZE 127
 
-#define COLUMN_USER_SIZE 32
-#define COLUMN_EMAIL_SIZE 127
+#define VALUE_MAX 32
+#define LISTMAP_MAX 20
+#define DATABASE_MAX 10
+#define LISTNAME_MAX 20
 
+/*
 typedef struct {
 
     uint32_t id;
@@ -19,12 +24,15 @@ typedef struct {
 
 }Row;
 
+*/
+
+
 
 
 struct key_value
 {
-    int key;
-    char* value;
+    uint32_t key;
+    char value[VALUE_MAX+1];
 
 
 };
@@ -34,18 +42,23 @@ struct key_value
 
 struct ListMap
 {
-    struct key_value kvPairs[listMapCap];
+    struct key_value kvPairs[LISTMAP_MAX];
+    size_t count;
+    char ListName[LISTNAME_MAX];
+};
+
+/*
+struct Database {
+    struct ListMap LM[DATABASE_MAX];
     size_t count;
 
 };
+*/
 
-
-
-
-bool ListMap_insert(struct ListMap* collection, int key,char* value)
+bool ListMap_insert(ListMap* collection, int key,char value[])
 {
 
-    if (collection->count == listMapCap)
+    if (collection->count ==LISTMAP_MAX)
     {
 
         return false;
@@ -54,7 +67,7 @@ bool ListMap_insert(struct ListMap* collection, int key,char* value)
 
     collection->kvPairs[count].key = key;
     //collection->kvPairs[count].value = strdup(value);
-    collection->kvPairs[count].value = value;
+    strcpy(collection->kvPairs[count].value,value);
     count++;
 
 
@@ -62,25 +75,32 @@ bool ListMap_insert(struct ListMap* collection, int key,char* value)
     return true;
 }
 
+
+
+
+
+
+//find the value of the key
 char* ValueforKey(struct ListMap* collection, int key)
 {
-    char* val = NULL;
+    char* value=NULL;
 
-    for (size_t i = 0; i < collection->count && val == NULL; i++)
+    for (size_t i = 0; i < collection->count && value == NULL; i++)
     {
         if (collection->kvPairs[i].key == key)
         {
-
-            val = collection->kvPairs[i].value;
-            break;
-
+            value = strdup(collection->kvPairs[i].value);
+            return value;
+ 
         }
 
     }
 
-    return val;
+    //return collection->kvPairs[i].value;
 }
 
+
+//update
 void updateValue(struct ListMap* collection, int key)
 {
     char *newstr=(char*)malloc(sizeof(char)*10);
@@ -98,7 +118,7 @@ void updateValue(struct ListMap* collection, int key)
 
             printf("enter your new value\n");
             scanf_s("%s",&newstr);
-            collection->kvPairs[i].value = newstr;
+            strcpy(collection->kvPairs[i].value,newstr);
             printf("ok. your new data in %d is : %s\n", key, newstr);
             return;
         }
