@@ -10,42 +10,37 @@
 //#define COLUMN_USER_SIZE 32
 //#define COLUMN_EMAIL_SIZE 127
 
-#define VALUE_MAX 32
+#define VALUE_STRING_MAX 100
 #define LISTMAP_MAX 20
 #define DATABASE_MAX 10
 #define LISTNAME_MAX 20
 
-/*
-typedef struct {
-
-    uint32_t id;
-    char username[COLUMN_USER_SIZE + 1];
-    char email[COLUMN_EMAIL_SIZE + 1];
-
-}Row;
-
-*/
 
 
 
 
-struct key_value
+
+typedef struct 
 {
-    uint32_t key;
-    char value[VALUE_MAX+1];
+    uint32_t key; //char* key;
+    void* value; //char* value[VALUE_MAX+1];
+    size_t value_size;
+    char value_type;  //'S'=string 'N'=num, 'B'
+}KeyValue;
 
 
-};
 
-
-
-
-struct ListMap
+typedef struct
 {
-    struct key_value kvPairs[LISTMAP_MAX];
+    KeyValue** items;
+    uint32_t size;
     size_t count;
-    char ListName[LISTNAME_MAX];
-};
+
+}HashTable;
+
+
+
+
 
 /*
 struct Database {
@@ -54,6 +49,118 @@ struct Database {
 
 };
 */
+
+
+
+
+
+
+KeyValue* create_item(HashTable* hash,uint32_t key, void* value)
+{
+    //allocate memory
+    KeyValue* newitem = (KeyValue*)malloc(sizeof(KeyValue));
+    //caching failed
+    if (newitem == NULL)
+    {
+        printf("create new item fail \n");
+        return;
+    }
+
+    //Dynamical Memory Allocation
+    if (newitem != NULL) 
+    {
+
+       // newitem->key = (char*)malloc(strlen(sizeof(key+1)));
+        
+        newitem->key = key;
+        //newitem->value = (void*)malloc(strlen(value) + 1);
+
+        newitem->value = value;
+
+
+        /*if (newitem->value != NULL)
+        {
+            strcpy(newitem->value, value);
+        }else //value fail
+         {
+            free(newitem);
+            newitem == NULL;
+        }*/
+
+        
+        
+    }
+    
+    /*
+    newitem->value = (void*)malloc(strlen(value) + 1);
+    strcpy(newitem->key, key); 
+    strcpy(newitem->value, value);
+    */
+    return newitem;
+}
+
+/*typedef struct
+{
+    KeyValue** items;
+    uint32_t size;
+    size_t count;
+
+}HashTable;*/
+
+HashTable* create_table(uint32_t size)
+{
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+
+    table->size = size;
+    table->count = 0;
+
+    table->items = (KeyValue**)calloc(table->size, sizeof(KeyValue*));
+
+    for (int i = 0; i < table->size; i++)
+        table->items[i] = NULL;
+
+    return table;
+}
+
+
+void free_item(KeyValue* kv)
+{
+    //free(kv->key);
+    free(kv->value);
+    free(kv);
+}
+
+void free_table(HashTable* table)
+{
+
+    for (int i = 0; i < table->size; i++)
+    {
+        KeyValue* item = table->items[i];
+        if (item != NULL) free(item);
+
+    }
+
+    free(table->items);
+    free(table);
+}
+
+
+void print_table(HashTable* table)
+{
+    printf("----------hahtable---------\n");
+    for (int i = 0; i < table->size; i++)
+    {
+
+        if (table->items[i])
+        {
+
+
+        }
+    }
+
+}
+
+
 
 bool ListMap_insert(ListMap* collection, int key,char value[])
 {
