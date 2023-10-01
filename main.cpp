@@ -10,6 +10,12 @@
 //#define COLUMN_USER_SIZE 32
 //#define COLUMN_EMAIL_SIZE 127
 
+
+#define _CRT_SECURE_NO_WARNINGS
+
+
+
+
 #define VALUE_MAX 32
 #define LISTMAP_MAX 20
 #define DATABASE_MAX 10
@@ -90,20 +96,28 @@ char* ValueforKey(struct ListMap* collection, int key)
         if (collection->kvPairs[i].key == key)
         {
             value = strdup(collection->kvPairs[i].value);
+
+
             return value;
  
         }
 
     }
 
-    //return collection->kvPairs[i].value;
+    return NULL;
 }
 
 
 //update
 void updateValue(struct ListMap* collection, int key)
 {
-    char *newstr=(char*)malloc(sizeof(char)*10);
+
+    //char *newstr=(char*)malloc(sizeof(char)*10);
+    char* newstr = NULL;
+    int newstr_len = 100;
+
+    newstr = (char*)malloc(sizeof(char)*newstr_len);
+
 
     if (collection == NULL)
     {
@@ -111,16 +125,53 @@ void updateValue(struct ListMap* collection, int key)
         return;
     }
 
+    if (newstr == NULL)
+    {
+        perror("memory allocation failed. \n");
+        return;
+    }
+
+
+
     for (size_t i = 0; i < collection->count; i++)
     {
         if (collection->kvPairs[i].key == key)
         {
 
             printf("enter your new value\n");
-            scanf_s("%s",&newstr);
-            strcpy(collection->kvPairs[i].value,newstr);
-            printf("ok. your new data in %d is : %s\n", key, newstr);
+            //scanf_s("%s",&newstr);
+            //strcpy(collection->kvPairs[i].value,newstr);
+            
+
+            //redesign the length of newstr
+            if (fgets(newstr, newstr_len-1, stdin) != NULL)
+            {
+                //len= the actul length of newstr
+                size_t len = strlen(newstr);
+
+                if (len > 0 && newstr[len - 1] == '\n') newstr[len - 1] = '\0';
+                //put newstr into kvpairs[i].value
+                if (strlen(newstr) < newstr_len)
+                {
+                    strcpy(collection->kvPairs[i].value, newstr);
+                    printf("ok. your new data in %d is : %s\n", key, collection->kvPairs[i].value);
+                    
+                }
+                else
+                {
+                    printf("your input value is too long, so it can't be stored in data table. \n");
+                }
+            
+            
+            }
+            else
+            {
+                perror("input read failed. \n");
+            }
+           
+            free(newstr);
             return;
+            
         }
 
     }
@@ -147,14 +198,7 @@ int main()
 
     //struct key_value *kv=(key_value* )malloc(sizeof(struct key_value)* numbers_of_keys);
 
-/*
-    if(mydata==NULL)
-  {
 
-      perror("nalloc");
-      exit(EXIT_FAILURE);
-  }
-  */
     char a1[10] = "aaa";
     char* str1 = a1;
     //char* str2 = "4f4";
