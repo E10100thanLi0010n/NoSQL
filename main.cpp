@@ -75,7 +75,7 @@ struct LinkedList* insert_LinkedList(struct LinkedList* list, struct Key_Value* 
     struct LinkedList* head = allocate_List();
 
     //no node in list
-    if (!list) 
+    if (!list)
     {
         head->node = kv;
         head->next = NULL;
@@ -249,17 +249,17 @@ struct Key_Value* search_KV(struct Hash* hm, int key)
     struct Key_Value* currKV = hm->KVPairs[index];
 
 
-    if(currKV!=NULL)
+    if (currKV != NULL)
     {
-        if(currKV->key=key) return currKV;
+        if (currKV->key = key) return currKV;
         /*
         if(head==NULL) return NULL;
         currKV=head->node;
         head=head->next;
-        
+
         */
     }
-    
+
     while (head != NULL)
     {
         if (head->node->key == key) return head->node;
@@ -287,9 +287,9 @@ char* ValueforKey(struct Hash* hm, int key)
             return hm->KVPairs[i]->value;
         }
     }
-    
-    
-    
+
+
+
     */
     printf("Sorry, there is no such Key_Value in the hash table.\n");
     return NULL;
@@ -421,7 +421,7 @@ void delete_KV(struct Hash* hm, int key)
     }
 
 
-    while (head != NULL)  
+    while (head != NULL)
     {
         if (head->node->key == key)  //found somewhere in the overflow_buckets[index]
         {
@@ -449,38 +449,10 @@ void delete_KV(struct Hash* hm, int key)
     printf("Key %d not found in the hash table.\n", key);
 }
 
-void free_overbuck(struct Hash* hm)
-{
-    struct LinkedList** buckets = hm->overflow_buckets;
-
-    for (int i = 0; i < hm->capacity; i++)
-        free_list(buckets[i]);
-
-    free(buckets);
-    hm->overflow_buckets = NULL;
-}
-
-//delete
-void free_KV(struct Key_Value* kv)
-{
-    if (kv != NULL)
-    {
-
-        if (kv->value != NULL) 
-        {
-            free(kv->value);
-            kv->value = NULL;
-        }
-
-    }
-
-    //free(kv->value);
-    free(kv);
-}
 
 void free_list(struct LinkedList* list)
 {
-    
+
     while (list)
     {
         struct LinkedList* temp = NULL;
@@ -498,6 +470,38 @@ void free_list(struct LinkedList* list)
     }
 }
 
+
+
+void free_overbuck(struct Hash* hm)
+{
+    struct LinkedList** buckets = hm->overflow_buckets;
+
+    for (int i = 0; i < hm->capacity; i++)
+        free_list(buckets[i]);
+
+    free(buckets);
+    hm->overflow_buckets = NULL;
+}
+
+//delete
+void free_KV(struct Key_Value* kv)
+{
+    if (kv != NULL)
+    {
+
+        if (kv->value != NULL)
+        {
+            free(kv->value);
+            kv->value = NULL;
+        }
+
+    }
+
+    //free(kv->value);
+    free(kv);
+}
+
+
 void free_Hash(struct Hash* hm)
 {
 
@@ -506,7 +510,7 @@ void free_Hash(struct Hash* hm)
     for (int i = 0; i < hm->count; i++)
     {
         struct Key_Value* kv = hm->KVPairs[i];
-        if(kv!=NULL)  
+        if (kv != NULL)
         {
             free_KV(hm->KVPairs[i]);
             hm->KVPairs[i] = NULL;
@@ -585,16 +589,18 @@ int main()
 
 
 
-    printf("valuefor key :1");
-    printf("value in key 1: %s", ValueforKey(table, 1));
+    printf("valuefor key :1 \n");
+
+    printf("value in key 1: %s \n", ValueforKey(table, 1));
 
     printf("after delete 2 \n");
     delete_KV(table, 2);
     printf("\n");
 
-    printf("\n");
-    show_Hash(table);
+    printf("update data for key: 102 \n");
+    updateValue(table, 102);
 
+    show_Hash(table);
 
     free_Hash(table);
     return 0;
